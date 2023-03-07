@@ -6,8 +6,8 @@
       <div class="flex w-full h-full gap-4">
         <div
           class="shrink-0 relative h-[180px] w-[300px] hover:scale-125 transition-all text-center flex justify-center items-center bg-gray-300"
-          v-for="repo in starredSelectedRepositories"
-          :key="repo.id"
+          v-for="repo in staredRepositories"
+          :key="repo.name"
         >
           <div>
             <h2 class="w-full text-xl font-bold">{{ repo.name }}</h2>
@@ -114,7 +114,7 @@ export default {
   data(): ShapeDataTopicSection {
     return {
       isLoading: false,
-      repositories: JSON.parse(localStorage.getItem('repositories') || '[]'),
+      repositories: JSON.parse(localStorage.getItem('staredRepositories') || '[]'),
       availableTopics: ['Vue', 'Typescript', 'Javascript', 'Go', 'CSS', 'Node'],
       selectedTopics: JSON.parse(localStorage.getItem('selectedTopics') || '[]'),
       selectedRepositories: [],
@@ -131,14 +131,25 @@ export default {
 
     if (this.selectedTopics.length === 0) {
       this.toggleSelected(this.availableTopics[0])
+    } else {
+      // Fetch repositories for the first selected topic
+      this.fetchRepositoriesForSpecificyTopicAndSort(this.selectedTopics[0], this.sortOption)
     }
 
     // Load previously starred repositories from cache
-    this.loadRepositoriesFromCache()
+    const staredRepoNames = this.staredRepositories.map((repo) => repo.name)
+    this.selectedRepositories.forEach((repo) => {
+      repo.isSelected = staredRepoNames.some((name) => name === repo.name)
+    })
   },
   methods: {
     async fetchRepositoriesForSpecificyTopicAndSort(topic: string, sortBy: string = 'stars') {
       try {
+        if (sortBy !== 'stars') {
+          this.selectedRepositories = []
+        }
+
+        this.isLoading = true
         axios.defaults.headers.common['Authorization'] = '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'
 
         const cachedData = localStorage.getItem(`selectedRepositories-${topic}-${sortBy}`)
@@ -163,7 +174,6 @@ export default {
           `selectedRepositories-${topic}-${sortBy}`,
           JSON.stringify(repositoriesWithTopic)
         )
-        return repositoriesWithTopic
       } catch (error) {
         console.error(error)
       } finally {
@@ -181,10 +191,22 @@ export default {
     },
 
     loadRepositoriesFromCache() {
-      const selectedRepos = this.staredRepositories.filter((repo) =>
-        this.selectedTopics.includes(repo.topic)
-      )
+      const selectedRepos = []
+      for (const topic of this.selectedTopics) {
+        const cachedData = localStorage.getItem(`selectedRepositories-${topic}-${this.sortOption}`)
+        if (cachedData) {
+          const cachedRepositories = JSON.parse(cachedData)
+          selectedRepos.push(...cachedRepositories)
+        }
+      }
       this.selectedRepositories = selectedRepos
+
+      // Update isSelected property of all repositories based on staredRepositories
+      const starredNames = this.staredRepositories.map((r) => r.name)
+      const allRepos = [...this.selectedRepositories, ...this.repositories]
+      allRepos.forEach((r) => {
+        r.isSelected = starredNames.includes(r.name)
+      })
     },
 
     toggleSelected(topic: string) {
@@ -199,11 +221,13 @@ export default {
         localStorage.setItem('selectedTopics', JSON.stringify(this.selectedTopics))
       }
 
-      // Clear selected repositories and fetch new ones for the currently selected topics
-      this.selectedRepositories = []
-      for (const topic of this.selectedTopics) {
-        this.fetchRepositoriesForSpecificyTopicAndSort(topic, this.sortOption)
-      }
+      // Set isSelected property for bookmarked repositories
+      this.selectedRepositories.forEach((repo) => {
+        const isStarred = this.staredRepositories.some((r) => r.name === repo.name)
+        repo.isSelected = isStarred ? true : false
+      })
+
+      this.fetchRepositoriesForSpecificyTopicAndSort(topic, this.sortOption)
     },
 
     toggleStar(repo: ShapeTopic) {
@@ -217,6 +241,15 @@ export default {
         this.staredRepositories.splice(index, 1)
         repo.isSelected = false
       }
+
+      // Update isSelected property of all repositories
+      const allRepos = [...this.selectedRepositories, ...this.repositories]
+      allRepos.forEach((r) => {
+        if (r.name === repo.name) {
+          r.isSelected = repo.isSelected
+        }
+      })
+
       localStorage.setItem('staredRepositories', JSON.stringify(this.staredRepositories))
     }
   },
@@ -229,10 +262,6 @@ export default {
           this.fetchRepositoriesForSpecificyTopicAndSort(topic, newVal)
         }
       }
-    },
-    selectedTopics: function (newVal, oldVal) {
-      const selectedRepos = this.repositories.filter((repo) => newVal.includes(repo.topic))
-      this.selectedRepositories = selectedRepos
     }
   },
   computed: {
