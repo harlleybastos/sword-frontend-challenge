@@ -1,68 +1,98 @@
-# sword-tech-test
+<div align="center" id="top"> 
+  <img src="./src/assets/img/app.gif" alt="Sword Tech Test" />
 
-This template should help get you started developing with Vue 3 in Vite.
+&#xa0;
 
-## Recommended IDE Setup
+<a href="https://sword-tech-project.web.app/">Demo</a>
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+</div>
 
-## Type Support for `.vue` Imports in TS
+<h1 align="center">Sword Tech Test</h1>
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+<p align="center">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/harlleybastos/sword-frontend-challenge?color=56BEB8">
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+  <img alt="Github language count" src="https://img.shields.io/github/languages/count/harlleybastos/sword-frontend-challenge?color=56BEB8">
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/harlleybastos/sword-frontend-challenge?color=56BEB8">
 
-## Customize configuration
+  <img alt="License" src="https://img.shields.io/github/license/harlleybastos/sword-frontend-challenge?color=56BEB8">
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+</p>
 
-## Project Setup
+<!-- Status -->
 
-```sh
-npm install
+<h4 align="center">
+	  Sword Tech Test 🚀
+    <br/> Complete  ✅
+</h4>
+
+<hr>
+
+<p align="center">
+  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
+  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
+  <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
+  <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
+  <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
+  <a href="#memo-license">License</a> &#xa0; | &#xa0;
+  <a href="https://github.com/harlleybastos" target="_blank">Author</a>
+</p>
+
+<br>
+
+## :dart: About
+
+The challenge is to build a Github repository discovery website with layouts inspired by Netflix,
+where users login to their accounts and see the popular repositories from Github by different
+topics.
+
+## :sparkles: Features
+
+:heavy_check_mark: Authentication;\
+:heavy_check_mark: Local Storage;\
+:heavy_check_mark: Github API;\
+:heavy_check_mark: Responsive Layout;
+
+## :rocket: Technologies
+
+The following tools were used in this project:
+
+- [Vue.js](https://vuejs.org/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [Cypress](https://www.cypress.io/)
+- [Firebase](https://firebase.google.com/?hl=pt)
+
+## :white_check_mark: Requirements
+
+Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) and [Node](https://nodejs.org/en/) installed.
+
+## :checkered_flag: Starting
+
+```bash
+# Clone this project
+$ git clone https://github.com/harlleybastos/sword-tech-test
+
+# Access
+$ cd sword-tech-test
+
+# Install dependencies
+$ yarn
+
+# Run the project
+$ yarn dev
+
+# The server will initialize in the <http://localhost:5173>
 ```
 
-### Compile and Hot-Reload for Development
+## :memo: License
 
-```sh
-npm run dev
-```
+This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.
 
-### Type-Check, Compile and Minify for Production
+Made with :heart: by <a href="https://github.com/harlleybastos" target="_blank">Harlley Bastos</a>
 
-```sh
-npm run build
-```
+&#xa0;
 
-### Run Headed Component Tests with [Cypress Component Testing](https://on.cypress.io/component)
-
-```sh
-npm run test:unit:dev # or `npm run test:unit` for headless testing
-```
-
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
-
-```sh
-npm run test:e2e:dev
-```
-
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-npm run build
-npm run test:e2e
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+<a href="#top">Back to top</a>
