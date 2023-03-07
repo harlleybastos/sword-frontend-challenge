@@ -172,8 +172,6 @@ export default {
       if (user) {
         this.username = user.displayName!
         this.email = user.email!
-      } else {
-        console.log('logo n trouxa')
       }
     })
   },

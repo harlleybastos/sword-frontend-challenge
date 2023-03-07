@@ -55,8 +55,6 @@ export default {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.currentUser.displayName = user.displayName!
-      } else {
-        console.log('logo n trouxa')
       }
     })
   },

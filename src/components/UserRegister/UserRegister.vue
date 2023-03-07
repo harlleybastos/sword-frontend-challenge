@@ -92,7 +92,6 @@
 
 <script lang="ts">
 import { auth } from '@/main'
-import { validateEmail, validatePassword } from '@/utils'
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth'
 import { useToast } from 'vue-toastification'
 
@@ -155,7 +154,9 @@ export default {
         })
         this.$router.push('/')
       } catch (e) {
-        console.log(e)
+        this.toast.success('There was an error, please try to check the fields !', {
+          timeout: 2000
+        })
       } finally {
         this.isLoading = false
       }

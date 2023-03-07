@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div v-if="selectedRepositories.length === 0">
+    <div v-if="staredRepositories.length === 0">
       <p class="text-lg text-center">Stared a repository and toggle a topic to see it here !</p>
     </div>
 
@@ -54,7 +54,7 @@
             <select
               id="sort-by"
               v-model="sortOption"
-              class="py-1 border rounded appearance-nonepx-2"
+              class="flex justify-center px-2 py-1 border rounded max-w-[300px]"
             >
               <option value="stars">Stars</option>
               <option value="forks">Forks</option>
@@ -108,6 +108,7 @@
 
 <script lang="ts">
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
 import type { ShapeDataTopicSection, ShapeTopic } from '../../types'
 
 export default {
@@ -122,6 +123,11 @@ export default {
       sortOption: 'stars'
     }
   },
+  setup() {
+    const toast = useToast()
+
+    return { toast }
+  },
   created() {
     if (this.repositories.length === 0) {
       this.fetchRepositoriesForAllTopics()
@@ -132,8 +138,12 @@ export default {
     if (this.selectedTopics.length === 0) {
       this.toggleSelected(this.availableTopics[0])
     } else {
-      // Fetch repositories for the first selected topic
-      this.fetchRepositoriesForSpecificyTopicAndSort(this.selectedTopics[0], this.sortOption)
+      const selectedTopics = JSON.parse(localStorage.getItem('selectedTopics') || '[]')
+      this.selectedTopics = selectedTopics
+
+      for (const topic of selectedTopics) {
+        this.fetchRepositoriesForSpecificyTopicAndSort(topic, this.sortOption)
+      }
     }
 
     // Load previously starred repositories from cache
@@ -141,6 +151,8 @@ export default {
     this.selectedRepositories.forEach((repo) => {
       repo.isSelected = staredRepoNames.some((name) => name === repo.name)
     })
+
+    // Load previously selected topics from cache
   },
   methods: {
     async fetchRepositoriesForSpecificyTopicAndSort(topic: string, sortBy: string = 'stars') {
@@ -156,7 +168,7 @@ export default {
         if (cachedData) {
           // If there is cached data for this topic/sort, use it
           const cachedRepositories = JSON.parse(cachedData)
-          this.selectedRepositories.push(...cachedRepositories)
+          this.selectedRepositories = this.selectedRepositories.concat(cachedRepositories)
           return cachedRepositories
         }
 
@@ -169,13 +181,15 @@ export default {
           ...repo,
           topic: topic.toLowerCase()
         }))
-        this.selectedRepositories.push(...repositoriesWithTopic)
+        this.selectedRepositories = this.selectedRepositories.concat(repositoriesWithTopic)
         localStorage.setItem(
           `selectedRepositories-${topic}-${sortBy}`,
           JSON.stringify(repositoriesWithTopic)
         )
       } catch (error) {
-        console.error(error)
+        this.toast.error('There was an error fetching repositories from the API !', {
+          timeout: 2000
+        })
       } finally {
         this.isLoading = false
       }
