@@ -12,12 +12,18 @@
           <div>
             <h2 class="w-full text-xl font-bold">{{ repo.name }}</h2>
           </div>
-          <button type="button" class="absolute top-0 right-0 p-4" @click="toggleStar(repo)">
+          <button
+            type="button"
+            data-test="star"
+            class="absolute top-0 right-0 p-4"
+            @click="toggleStar(repo)"
+          >
             <img
               v-if="repo.isSelected"
               src="../../assets/svg/selected-star.svg"
               alt="Selected"
               width="30"
+              data-test="star-selected"
             />
             <img v-else src="../../assets/svg/unselected-star.svg" alt="Not selected" width="30" />
           </button>
@@ -64,7 +70,10 @@
           </div>
         </div>
         <div class="w-full mt-4">
-          <div v-if="isLoading" class="text-center text-gray-500">
+          <div
+            v-if="isLoading && selectedRepositories.length === 0"
+            class="text-center text-gray-500"
+          >
             <span
               class="inline-block w-8 h-8 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"
             ></span>
