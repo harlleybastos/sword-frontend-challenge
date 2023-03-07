@@ -133,12 +133,8 @@ export default {
       }
     },
     validatePassword() {
-      const regexForPasswordAtLeastOneCharactherOneLetterAndOneNumber =
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
-
-      if (!regexForPasswordAtLeastOneCharactherOneLetterAndOneNumber.test(this.password)) {
-        this.passwordError =
-          'Your password must have at least eight characters, at least one letter and one number.'
+      if (this.passwordError.length >= 6) {
+        this.passwordError = 'Your password must have at least six characters !'
       } else {
         this.passwordError = ''
       }
@@ -176,6 +172,18 @@ export default {
       } else {
         this.passwordError = ''
       }
+    }
+  },
+  computed: {
+    isValid(): boolean {
+      return Boolean(
+        this.email &&
+          this.password &&
+          this.userName &&
+          !this.emailError &&
+          !this.passwordError &&
+          !this.userNameError
+      )
     }
   }
 }

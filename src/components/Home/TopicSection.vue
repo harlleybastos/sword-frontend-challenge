@@ -2,15 +2,17 @@
   <div class="flex flex-col px-14">
     <h1 class="mt-4 mb-4 text-2xl font-bold">Bookmarked repositories</h1>
 
-    <div class="w-full mt-4">
-      <div class="flex w-full h-full gap-4">
+    <div v-if="staredRepositories.length >= 1" class="w-full mt-4">
+      <div class="flex w-full h-full gap-4 overflow-x-scroll">
         <div
-          class="shrink-0 relative h-[180px] w-[300px] hover:scale-125 transition-all text-center flex justify-center items-center bg-gray-300"
+          class="shrink-0 mb-11 mt-11 ml-11 cursor-pointer relative h-[180px] w-[300px] hover:scale-125 transition-all text-center flex justify-center items-center bg-gray-300"
           v-for="repo in staredRepositories"
           :key="repo.name"
         >
           <div>
-            <h2 class="w-full text-xl font-bold">{{ repo.name }}</h2>
+            <h2 class="w-full text-xl font-bold">
+              <a :href="repo.owner.html_url" target="_blank">{{ repo.name }}</a>
+            </h2>
           </div>
           <button
             type="button"
@@ -40,6 +42,7 @@
       <div class="flex flex-wrap">
         <button
           v-for="topic in availableTopics"
+          :disabled="isLoading"
           :key="topic"
           :class="{
             'bg-blue-500 text-white': selectedTopics.includes(topic),
@@ -57,23 +60,36 @@
         <div class="flex">
           <h2 class="mt-5 mb-5 text-2xl font-bold">Top {{ topic }}</h2>
           <div class="flex items-center ml-4 w-[100px]">
-            <select
-              id="sort-by"
-              v-model="sortOption"
-              class="flex justify-center px-2 py-1 border rounded max-w-[300px]"
-            >
-              <option value="stars">Stars</option>
-              <option value="forks">Forks</option>
-              <option value="help-wanted-issues">Help Wanted Issues</option>
-              <option value="updated">Updated</option>
-            </select>
+            <div class="relative">
+              <img
+                v-if="isSelectOpen"
+                class="absolute transform rotate-[180deg] -translate-y-1/2 top-1/2 right-[-30px] cursor-pointer"
+                src="../../assets/svg/arrow-down.png"
+                width="25"
+              />
+              <img
+                v-else
+                class="absolute transform -translate-y-1/2 cursor-pointer top-1/2 right-[-30px]"
+                src="../../assets/svg/arrow-down.png"
+                width="20"
+              />
+              <select
+                @click="isSelectOpen = !isSelectOpen"
+                id="sort-by"
+                v-model="sortOption"
+                class="flex justify-center px-2 py-1 text-center border border-none rounded appearance-none"
+              >
+                <option value="stars">Stars</option>
+                <option value="forks">Forks</option>
+                <option value="help-wanted-issues">Help Wanted Issues</option>
+                <option value="updated">Updated</option>
+              </select>
+            </div>
           </div>
         </div>
+
         <div class="w-full mt-4">
-          <div
-            v-if="isLoading && selectedRepositories.length === 0"
-            class="text-center text-gray-500"
-          >
+          <div v-if="isLoading" class="text-center text-gray-500">
             <span
               class="inline-block w-8 h-8 border-t-2 border-b-2 border-gray-500 rounded-full animate-spin"
             ></span>
@@ -91,7 +107,9 @@
               :key="repo.name"
             >
               <div>
-                <h2 class="w-full text-xl font-bold">{{ repo.name }}</h2>
+                <h2 class="w-full text-xl font-bold">
+                  <a :href="repo.html_url" target="_blank">{{ repo.name }}</a>
+                </h2>
               </div>
               <button type="button" class="absolute top-0 right-0 p-4" @click="toggleStar(repo)">
                 <img
@@ -129,7 +147,8 @@ export default {
       selectedTopics: JSON.parse(localStorage.getItem('selectedTopics') || '[]'),
       selectedRepositories: [],
       staredRepositories: JSON.parse(localStorage.getItem('staredRepositories') || '[]'),
-      sortOption: 'stars'
+      sortOption: 'stars',
+      isSelectOpen: false
     }
   },
   setup() {
@@ -166,12 +185,7 @@ export default {
   methods: {
     async fetchRepositoriesForSpecificyTopicAndSort(topic: string, sortBy: string = 'stars') {
       try {
-        if (sortBy !== 'stars') {
-          this.selectedRepositories = []
-        }
-
         this.isLoading = true
-        axios.defaults.headers.common['Authorization'] = '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'
 
         const cachedData = localStorage.getItem(`selectedRepositories-${topic}-${sortBy}`)
         if (cachedData) {
@@ -183,13 +197,20 @@ export default {
 
         // Otherwise, fetch the data from the API and store it in localStorage
         const { data } = await axios.get(
-          `https://api.github.com/search/repositories?q=topic:${topic}&sort=${sortBy}&order=desc`
+          `https://api.github.com/search/repositories?q=topic:${topic}&sort=${sortBy}&order=desc`,
+          {
+            headers: {
+              Authorization: 'token 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'
+            }
+          }
         )
 
         const repositoriesWithTopic = data.items.map((repo: ShapeTopic) => ({
           ...repo,
-          topic: topic.toLowerCase()
+          topic: topic.toLowerCase(),
+          sortBy: sortBy
         }))
+
         this.selectedRepositories = this.selectedRepositories.concat(repositoriesWithTopic)
         localStorage.setItem(
           `selectedRepositories-${topic}-${sortBy}`,
@@ -233,6 +254,7 @@ export default {
     },
 
     toggleSelected(topic: string) {
+      this.isLoading = true
       const index = this.selectedTopics.indexOf(topic)
       if (index === -1) {
         // Topic is not currently selected
@@ -280,10 +302,15 @@ export default {
   watch: {
     sortOption(newVal: string, oldVal: string) {
       if (newVal !== oldVal) {
-        // Reload repositories with the new sorting option
+        this.selectedRepositories = []
         for (const topic of this.selectedTopics) {
           this.fetchRepositoriesForSpecificyTopicAndSort(topic, newVal)
         }
+      }
+    },
+    selectedTopics: {
+      handler(newVal, oldVal) {
+        console.log('selectedTopics changed:', newVal)
       }
     }
   },

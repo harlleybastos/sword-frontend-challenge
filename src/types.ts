@@ -6,6 +6,8 @@ export interface ShapeTopic {
   private: false
   isSelected: boolean
   topic: string
+  html_url: string
+  sortBy: string
   owner: {
     login: string
     id: number
@@ -40,6 +42,7 @@ export type ShapeDataTopicSection = {
   selectedTopics: string[]
   staredRepositories: ShapeTopic[]
   sortOption: string
+  isSelectOpen: boolean
 }
 
 export type ShapeDataBookmarkSection = {

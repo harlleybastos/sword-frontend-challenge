@@ -60,8 +60,8 @@
     </div>
     <div class="flex items-center justify-center w-[240px] md:w-[390px] mt-3">
       <button
-        :disabled="(email && password).length <= 0"
-        :class="(email && password).length <= 0 ? 'bg-gray-400' : 'bg-black'"
+        :disabled="!isValid"
+        :class="!isValid ? 'bg-gray-400' : 'bg-black'"
         @click="login"
         type="button"
         class="w-full bg-black h-[50px] rounded-md text-white"
@@ -111,14 +111,11 @@ export default {
       }
     },
     validatePassword() {
-      const regexForPasswordAtLeastOneCharactherOneLetterAndOneNumber =
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
-
-      if (!regexForPasswordAtLeastOneCharactherOneLetterAndOneNumber.test(this.password)) {
+      if (this.password.length >= 6) {
+        this.passwordError = ''
+      } else {
         this.passwordError =
           'Your password must have at least eight characters, at least one letter and one number.'
-      } else {
-        this.passwordError = ''
       }
     },
     async login() {
@@ -155,6 +152,11 @@ export default {
       } else {
         this.passwordError = ''
       }
+    }
+  },
+  computed: {
+    isValid(): boolean {
+      return Boolean(this.email && this.password && !this.emailError && !this.passwordError)
     }
   }
 }
