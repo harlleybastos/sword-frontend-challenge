@@ -46,9 +46,10 @@ import { auth } from '@/main'
 import { onAuthStateChanged, signOut } from '@firebase/auth'
 
 export default {
-  data() {
-    return {
-      currentUser: { displayName: '' }
+  props: {
+    currentUser: {
+      type: Object,
+      default: () => ({ displayName: '' })
     }
   },
   mounted() {

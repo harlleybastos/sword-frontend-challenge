@@ -101,6 +101,12 @@ export default {
       isLoading: false
     }
   },
+  props: {
+    currentUser: {
+      type: Object,
+      default: () => ({ displayName: '' })
+    }
+  },
   methods: {
     validateEmail() {
       const regexForEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
@@ -121,11 +127,13 @@ export default {
     async login() {
       try {
         this.isLoading = true
+        const getUser = auth.currentUser?.displayName
         await signInWithEmailAndPassword(auth, this.email, this.password)
         this.toast.success('Login successful !', {
           timeout: 2000
         })
         this.$router.push('/')
+        this.$emit('update-current-user', { displayName: getUser })
       } catch (e) {
         this.toast.error(
           'There was an error durring the login, please check the both e-mail and password !',
