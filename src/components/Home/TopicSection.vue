@@ -77,7 +77,7 @@
                 @click="isSelectOpen = !isSelectOpen"
                 id="sort-by"
                 v-model="sortOption"
-                class="flex justify-center px-2 py-1 text-center border border-none rounded appearance-none"
+                class="flex justify-center px-2 py-1 text-center border-2 border-gray-500 border-none rounded appearance-none"
               >
                 <option value="stars">Stars</option>
                 <option value="forks">Forks</option>
@@ -147,7 +147,7 @@ export default {
       selectedTopics: JSON.parse(localStorage.getItem('selectedTopics') || '[]'),
       selectedRepositories: [],
       staredRepositories: JSON.parse(localStorage.getItem('staredRepositories') || '[]'),
-      sortOption: 'stars',
+      sortOption: localStorage.getItem('sortOption') || 'stars',
       isSelectOpen: false
     }
   },
@@ -300,12 +300,11 @@ export default {
   },
 
   watch: {
-    sortOption(newVal: string, oldVal: string) {
-      if (newVal !== oldVal) {
-        this.selectedRepositories = []
-        for (const topic of this.selectedTopics) {
-          this.fetchRepositoriesForSpecificyTopicAndSort(topic, newVal)
-        }
+    sortOption(newVal: string) {
+      this.selectedRepositories = []
+      localStorage.setItem('sortOption', newVal) // store the new value in localStorage
+      for (const topic of this.selectedTopics) {
+        this.fetchRepositoriesForSpecificyTopicAndSort(topic, newVal)
       }
     },
     selectedTopics: {
