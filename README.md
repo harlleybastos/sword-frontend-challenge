@@ -9,23 +9,9 @@
 
 <h1 align="center">Sword Tech Test</h1>
 
-<p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/harlleybastos/sword-frontend-challenge?color=56BEB8">
-
-  <img alt="Github language count" src="https://img.shields.io/github/languages/count/harlleybastos/sword-frontend-challenge?color=56BEB8">
-
-  <img alt="Repository size" src="https://img.shields.io/github/repo-size/harlleybastos/sword-frontend-challenge?color=56BEB8">
-
-  <img alt="License" src="https://img.shields.io/github/license/harlleybastos/sword-frontend-challenge?color=56BEB8">
-
-</p>
-
-<!-- Status -->
-
-<h4 align="center">
-	  Sword Tech Test 🚀
-    <br/> Complete  ✅
-</h4>
+<h2 align="center">
+    Complete  ✅
+</h2>
 
 <hr>
 
